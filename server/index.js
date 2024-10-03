@@ -8,7 +8,13 @@ const app = express();
 const socket = require("socket.io");
 require("dotenv").config();
 
-app.use(cors());
+// CORS setup: Allowing only Vercel frontend
+app.use(cors({
+  origin: "https://zappy-chat-app.vercel.app",  // Allow only this origin
+  methods: ["GET", "POST", "PUT", "DELETE"],    // Specify allowed HTTP methods
+  credentials: true                             // Allow credentials (e.g., cookies or authorization headers)
+}));
+
 app.use(express.json());
 
 mongoose
@@ -85,7 +91,6 @@ app.get("/", (req, res) => {
   `);
 });
 
-
 app.get("/ping", (_req, res) => {
   return res.json({ msg: "Ping Successful" });
 });
@@ -97,11 +102,13 @@ const server = app.listen(process.env.PORT, () =>
   console.log(`Server started on ${process.env.PORT}`)
 );
 
+// Socket.io setup with CORS configuration
 const io = socket(server, {
   cors: {
-    origin: "https://zappy-chat-app.vercel.app",
+    origin: "https://zappy-chat-app.vercel.app",  // Allow frontend origin
     methods: ["GET", "POST"],
-  },
+    credentials: true                             // Allow credentials
+  }
 });
 
 const onlineUsers = new Map();
@@ -117,7 +124,7 @@ io.on('connection', (socket) => {
       await User.findByIdAndUpdate(userId, { isOnline: true }); // Update user status in the database
       socket.broadcast.emit('user-status', userId, true); // Notify others of user's online status
     } catch (error) {
-      console.error('Error updating user status:', error);
+      console.error(`Error updating user status for userId ${userId}:`, error);
     }
   });
 
@@ -136,7 +143,7 @@ io.on('connection', (socket) => {
         await User.findByIdAndUpdate(disconnectedUserId, { isOnline: false }); // Update user status in the database
         socket.broadcast.emit('user-status', disconnectedUserId, false); // Notify others of user's offline status
       } catch (error) {
-        console.error('Error updating user status:', error);
+        console.error(`Error updating user status for userId ${disconnectedUserId}:`, error);
       }
     }
 
@@ -155,7 +162,7 @@ io.on('connection', (socket) => {
       await User.findByIdAndUpdate(userId, { isOnline: false }); // Update user status in the database
       socket.broadcast.emit('user-status', userId, false); // Notify others of user's offline status
     } catch (error) {
-      console.error('Error updating user status:', error);
+      console.error(`Error updating user status for userId ${userId}:`, error);
     }
     socket.disconnect(); // Disconnect the socket
   });
