@@ -30,23 +30,56 @@ app.get("/", (req, res) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Hello Page</title>
         <style>
+          * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+          }
           body {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background: linear-gradient(135deg, #f65593, #2ee4ea);
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            text-align: center;
           }
           h1 {
-            color: #333;
-            font-size: 3rem;
+            font-size: 3.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            animation: fadeIn 1.5s ease-in-out;
+          }
+          h1 span {
+            display: block;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            font-weight: 300;
+            opacity: 0.8;
+          }
+          @keyframes fadeIn {
+            0% {
+              opacity: 0;
+              transform: translateY(-20px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          @media (max-width: 768px) {
+            h1 {
+              font-size: 2.5rem;
+            }
+            h1 span {
+              font-size: 1rem;
+            }
           }
         </style>
       </head>
       <body>
-        <h1>Hello Harsh!</h1>
+        <h1>Hello Harsh!<span>This is your ZappyChatBase &#10084;&#10084;</span></h1>
       </body>
     </html>
   `);
